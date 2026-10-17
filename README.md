@@ -47,7 +47,9 @@ No root, no bootloader unlock.
 
 ### Step 2 — download
 
-On this page: **Code → Download ZIP**, then extract it. Keep the folder intact — the scripts expect this structure. (Or clone the repository with `git clone <repo-url>`.)
+Click the green **Code** button on this page → **Download ZIP** (GitHub generates this ZIP automatically from the repository), then extract it. Keep the folder intact — the scripts expect this structure. You can also `git clone` the repository.
+
+> **Only need the phone app?** Grab `OBSPhoneCam.apk` from the [**Releases**](https://github.com/bunty-raghani/obs-phone-cam/releases/latest) page — the PC scripts and relay from this repository are still required to stream.
 
 ### Step 3 — one-time install (phone connected and unlocked)
 

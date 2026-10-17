@@ -8,7 +8,7 @@ if [[ "$(uname -s)" != "Darwin" ]]; then
     exit 1
 fi
 
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TOOLS_ROOT="$PROJECT_ROOT/.tools"
 PLATFORM_TOOLS="$TOOLS_ROOT/platform-tools"
 ADB="$PLATFORM_TOOLS/adb"

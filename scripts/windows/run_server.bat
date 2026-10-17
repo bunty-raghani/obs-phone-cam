@@ -1,5 +1,5 @@
 @echo off
-cd /d "%~dp0"
+cd /d "%~dp0..\.."
 
 where python >nul 2>&1
 if errorlevel 1 (
@@ -21,7 +21,7 @@ if errorlevel 1 (
 )
 
 :run
-python server.py %*
+python relay\server.py %*
 set "PHONECAM_EXIT=%ERRORLEVEL%"
 pause
 exit /b %PHONECAM_EXIT%

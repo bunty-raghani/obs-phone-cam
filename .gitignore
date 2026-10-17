@@ -1,11 +1,12 @@
-# Project-local toolchains and caches
+# Project-local toolchains and caches (created by the launchers)
 .tools/
 .gradle/
-local.properties
 
 # Android/IDE build state
-app/build/
-build/
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
 .idea/
 .vscode/
 *.iml
@@ -20,6 +21,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Ignore generated APKs except the verified prebuilt release at repository root
+# Ignore generated APKs except the packaged release binary in dist/
 *.apk
-!OBSPhoneCam.apk
+!dist/OBSPhoneCam.apk

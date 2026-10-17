@@ -1,6 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
-$ProjectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectRoot = Split-Path -Parent (Split-Path -Parent $ScriptRoot)
 $ToolsRoot = Join-Path $ProjectRoot '.tools'
 $JdkRoot = Join-Path $ToolsRoot 'jdk'
 $SdkRoot = Join-Path $ToolsRoot 'android-sdk'
@@ -63,10 +64,11 @@ Write-Host 'Installing Android SDK packages...'
 & $CommandLineTools --sdk_root=$SdkRoot 'platform-tools' 'platforms;android-35' 'build-tools;35.0.0'
 
 Write-Host 'Building release APK...'
-& (Join-Path $GradleRoot 'bin\gradle.bat') --no-daemon --console=plain -p $ProjectRoot assembleRelease
+& (Join-Path $GradleRoot 'bin\gradle.bat') --no-daemon --console=plain -p (Join-Path $ProjectRoot 'android') assembleRelease
 if ($LASTEXITCODE -ne 0) { throw "Gradle build failed with exit code $LASTEXITCODE" }
 
-$BuiltApk = Join-Path $ProjectRoot 'app\build\outputs\apk\release\app-release.apk'
-$FinalApk = Join-Path $ProjectRoot 'OBSPhoneCam.apk'
+$BuiltApk = Join-Path $ProjectRoot 'android\app\build\outputs\apk\release\app-release.apk'
+$FinalApk = Join-Path $ProjectRoot 'dist\OBSPhoneCam.apk'
+New-Item -ItemType Directory -Force -Path (Join-Path $ProjectRoot 'dist') | Out-Null
 Copy-Item -LiteralPath $BuiltApk -Destination $FinalApk -Force
 Write-Host "Built: $FinalApk"

@@ -1,6 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
-$ProjectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectRoot = Split-Path -Parent (Split-Path -Parent $ScriptRoot)
 $ToolsRoot = Join-Path $ProjectRoot '.tools'
 $PlatformTools = Join-Path $ToolsRoot 'platform-tools'
 $Adb = Join-Path $PlatformTools 'adb.exe'

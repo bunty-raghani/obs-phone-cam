@@ -17,7 +17,7 @@ After streaming starts, the phone can be locked and its display remains off. A f
 
 Relative to the original [Phone-to-OBS-Studio-as-Webcam](https://github.com/FurkanGozukara/Phone-to-OBS-Studio-as-Webcam) project:
 
-- **macOS support in every script** — `setup.sh`, `run_server.sh` / `run_server.command`, `install_and_run.sh` / `install_and_run.command`, and `build.sh` mirror the Windows scripts, so installation, daily launch, and source builds work identically on macOS and Windows. The relay itself (`server.py`) is the same platform-independent Python file on both.
+- **macOS support in every script** — `setup.sh`, `run_server.sh` / `run_server.command`, `install_and_run.sh` / `install_and_run.command`, and `build.sh` mirror the Windows scripts; both platform script sets live under `scripts/`, so installation, daily launch, and source builds work identically on macOS and Windows. The relay itself (`relay/server.py`) is the same platform-independent Python file on both.
 - **Live camera swap** — a floating **⇄** button in the app (and a **Switch camera** notification action) switches between the front and rear lenses *without stopping the stream*. The USB link, wake lock, and foreground notification stay up; OBS keeps the same Media Source and resumes on the next keyframe. Your selected resolution/FPS carry over to the other lens whenever it supports them, with a smart fallback to the best available mode otherwise.
 - **Advanced capture settings in the phone app** — quality presets with automatic bitrate (`Basic`, `Balanced`, `High (recommended)`, `Maximum`) plus a fully **Custom** bitrate, and an **Advanced** panel with **Rate control** (CBR/VBR, as reported by the encoder), **Processing** (`High quality` / `Fastest`), and **Stabilization** (shown when the lens supports it).
 - **Device-agnostic name and package** — the project, launcher label, and APK are branded **OBS PhoneCam** (`OBSPhoneCam.apk`, package `com.local.obsphonecam`). Nothing is POCO-specific; the app lists exactly what any Android 8.0+ phone exposes.
@@ -72,17 +72,17 @@ Measurements are from the listed devices and are not guarantees for every phone,
 
 ## Files you need
 
-- `OBSPhoneCam.apk` — prebuilt Android application (works on any Android 8.0+ phone)
-- `server.py` — USB receiver and OBS relay; Python standard library only
+- `dist/OBSPhoneCam.apk` — prebuilt Android application (works on any Android 8.0+ phone)
+- `relay/server.py` — USB receiver and OBS relay; Python standard library only
 
-Windows launchers:
+Windows launchers (`scripts\windows\`):
 
 - `install_and_run.bat` — first-time installation and server launcher
 - `run_server.bat` — normal launcher after the app is installed
 - `setup.ps1` — downloads Google's Android Platform-Tools when ADB is not already installed
 - `build.ps1` — optional local APK build bootstrap
 
-macOS launchers:
+macOS launchers (`scripts/macos/`):
 
 - `install_and_run.command` — double-clickable first-time installation and server launcher
 - `run_server.command` — double-clickable normal launcher
@@ -90,10 +90,10 @@ macOS launchers:
 - `setup.sh` — downloads Google's Android Platform-Tools when ADB is not already installed
 - `build.sh` — optional local APK build bootstrap
 
-Prebuilt APK SHA-256:
+Prebuilt APK (`dist/OBSPhoneCam.apk`) SHA-256:
 
 ```text
-61C61735C90FF44687E17D53AEA9C52133AC60AE867F7436FEDA5669C09F2D29
+84B239138806A5A25528763D227ECE85C767B70D432C43636080B20483A73164
 ```
 
 ## Requirements
@@ -123,7 +123,7 @@ git clone <repository-url>
 cd <repository-folder>
 ```
 
-Keep `OBSPhoneCam.apk`, the launcher scripts, and `server.py` together in the same directory.
+Keep the repository folder intact — the launchers expect the layout described in [Repository layout](#repository-layout).
 
 > [!NOTE]
 > On macOS, if a launcher reports `permission denied` when you run it from Terminal, make the scripts executable once with `chmod +x *.sh *.command` in the project directory.
@@ -146,19 +146,19 @@ The bootloader does not need to be unlocked, and the phone does not need root ac
 On **Windows**, double-click:
 
 ```text
-install_and_run.bat
+scripts\windows\install_and_run.bat
 ```
 
 On **macOS**, double-click:
 
 ```text
-install_and_run.command
+scripts/macos/install_and_run.command
 ```
 
 or run it from Terminal:
 
 ```bash
-./install_and_run.sh
+./scripts/macos/install_and_run.sh
 ```
 
 On its first run it will:
@@ -309,7 +309,7 @@ Skip this filter for an ordinary webcam overlay when exact cross-source visual t
 After the APK is installed:
 
 1. Connect and unlock the phone.
-2. Double-click `run_server.bat` on Windows, or `run_server.command` on macOS (`./run_server.sh` in Terminal).
+2. Double-click `scripts\windows\run_server.bat` on Windows, or `scripts/macos/run_server.command` on macOS (`./scripts/macos/run_server.sh` in Terminal).
 3. Open OBS PhoneCam, select the video mode, and tap **Start**.
 4. After `LIVE over USB` appears, lock the phone to turn its display off.
 5. Open OBS or show the existing `OBS PhoneCam` Media Source.
@@ -414,7 +414,7 @@ If macOS Gatekeeper or quarantine blocks `install_and_run.command` or `run_serve
 
 ```bash
 xattr -dr com.apple.quarantine .
-chmod +x *.sh *.command
+chmod +x scripts/macos/*.sh scripts/macos/*.command
 ```
 
 ## Build the APK from source
@@ -424,19 +424,19 @@ The prebuilt APK is included, so rebuilding is optional.
 From PowerShell (Windows):
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\build.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\build.ps1
 ```
 
 From Terminal (macOS):
 
 ```bash
-./build.sh
+./scripts/macos/build.sh
 ```
 
 `build.ps1` and `build.sh` keep everything project-local. They download JDK 17, Gradle 8.9, Android command-line tools, Platform-Tools, API 35, and Android Build Tools 35 into `.tools`, accept the required SDK licenses, build the release variant, and copy the result to:
 
 ```text
-OBSPhoneCam.apk
+dist/OBSPhoneCam.apk
 ```
 
 The project uses Android Gradle Plugin 8.7.3, Java 17, `minSdk 26`, and `targetSdk 35`.
@@ -446,32 +446,49 @@ The project uses Android Gradle Plugin 8.7.3, Java 17, `minSdk 26`, and `targetS
 
 ## Repository layout
 
+The repository is organized as modules:
+
+- **`android/`** — the Android application (a Gradle project; `android/app/` is the application module that builds `OBSPhoneCam.apk`)
+- **`relay/`** — the Python USB receiver and MPEG-TS relay for OBS (`server.py`, standard library only)
+- **`scripts/macos/`** — macOS launchers (`setup.sh`, `install_and_run.sh` / `.command`, `run_server.sh` / `.command`, `build.sh`)
+- **`scripts/windows/`** — Windows launchers (`setup.ps1`, `install_and_run.bat`, `run_server.bat`, `build.ps1`)
+- **`dist/`** — the packaged, installable `OBSPhoneCam.apk`
+
 ```text
 .
-├── OBSPhoneCam.apk              Prebuilt APK (any Android 8.0+ phone)
-├── server.py                    ADB receiver and MPEG-TS relay
-├── setup.ps1                    Windows: runtime ADB/Platform-Tools setup
-├── run_server.bat               Windows: normal launcher
-├── install_and_run.bat          Windows: install APK and launch relay
-├── build.ps1                    Windows: local Android build bootstrap
-├── setup.sh                     macOS: runtime ADB/Platform-Tools setup
-├── run_server.sh                macOS: normal launcher
-├── run_server.command           macOS: Finder double-click launcher
-├── install_and_run.sh           macOS: install APK and launch relay
-├── install_and_run.command      macOS: Finder double-click installer
-├── build.sh                     macOS: local Android build bootstrap
-├── build.gradle                 Android root build configuration
-├── settings.gradle
-├── gradle.properties
-└── app/
-    ├── build.gradle
-    └── src/main/
-        ├── AndroidManifest.xml
-        ├── java/com/local/obsphonecam/MainActivity.java
-        ├── java/com/local/obsphonecam/CameraService.java
-        ├── java/com/local/obsphonecam/CameraCatalog.java
-        └── res/values/styles.xml
+├── README.md
+├── .gitignore
+├── android/
+│   ├── build.gradle
+│   ├── settings.gradle
+│   ├── gradle.properties
+│   └── app/
+│       ├── build.gradle
+│       └── src/main/
+│           ├── AndroidManifest.xml
+│           ├── java/com/local/obsphonecam/
+│           │   ├── MainActivity.java
+│           │   ├── CameraService.java
+│           │   └── CameraCatalog.java
+│           └── res/values/styles.xml
+├── relay/
+│   └── server.py
+├── scripts/
+│   ├── macos/
+│   │   ├── setup.sh
+│   │   ├── install_and_run.sh / install_and_run.command
+│   │   ├── run_server.sh / run_server.command
+│   │   └── build.sh
+│   └── windows/
+│       ├── setup.ps1
+│       ├── install_and_run.bat
+│       ├── run_server.bat
+│       └── build.ps1
+└── dist/
+    └── OBSPhoneCam.apk
 ```
+
+> `.tools/` is created automatically by the launchers (JDK, Gradle, Android SDK, Platform-Tools) and is excluded from Git.
 
 ## Technical details
 

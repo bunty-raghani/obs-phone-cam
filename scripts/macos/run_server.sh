@@ -2,7 +2,7 @@
 # OBS PhoneCam server launcher for macOS: ensures Python 3.10+, ADB, then starts the relay.
 set -euo pipefail
 
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$PROJECT_ROOT"
 
 find_python() {
@@ -48,7 +48,7 @@ fi
 
 if ! find_adb >/dev/null; then
     echo "ADB was not found; downloading Android Platform-Tools..."
-    "$PROJECT_ROOT/setup.sh"
+    "$PROJECT_ROOT/scripts/macos/setup.sh"
 fi
 
-exec "$PYTHON" server.py "$@"
+exec "$PYTHON" "$PROJECT_ROOT/relay/server.py" "$@"

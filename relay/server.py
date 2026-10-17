@@ -310,8 +310,13 @@ class ObsHttpHandler(BaseHTTPRequestHandler):
         return
 
 
+def project_root() -> Path:
+    """Repository root (this file lives in the relay/ module directory)."""
+    return Path(__file__).resolve().parent.parent
+
+
 def find_adb() -> str:
-    root = Path(__file__).resolve().parent
+    root = project_root()
     candidates = [
         root / ".tools" / "android-sdk" / "platform-tools" / "adb.exe",
         root / ".tools" / "platform-tools" / "adb.exe",
@@ -351,12 +356,14 @@ def adb_prepare(adb: str) -> str:
 
 
 def install_apk(adb: str, serial: str) -> None:
-    root = Path(__file__).resolve().parent
-    apk = root / "OBSPhoneCam.apk"
+    root = project_root()
+    apk = root / "dist" / "OBSPhoneCam.apk"
     if not apk.is_file():
-        apk = root / "app" / "build" / "outputs" / "apk" / "release" / "app-release.apk"
+        apk = root / "android" / "app" / "build" / "outputs" / "apk" / "release" / "app-release.apk"
     if not apk.is_file():
-        raise FileNotFoundError("OBSPhoneCam.apk is missing; run build.ps1 (Windows) or build.sh (macOS) first.")
+        raise FileNotFoundError(
+            "dist/OBSPhoneCam.apk is missing; run scripts/windows/build.ps1 (Windows) "
+            "or scripts/macos/build.sh (macOS) first.")
     subprocess.run([adb, "-s", serial, "install", "-r", str(apk)], check=True)
     print(f"Installed {apk.name}")
 

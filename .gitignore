@@ -1,0 +1,25 @@
+# Project-local toolchains and caches
+.tools/
+.gradle/
+local.properties
+
+# Android/IDE build state
+app/build/
+build/
+.idea/
+.vscode/
+*.iml
+
+# Python and runtime artifacts
+__pycache__/
+*.py[cod]
+*.log
+*.ts
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Ignore generated APKs except the verified prebuilt release at repository root
+*.apk
+!OBSPhoneCam.apk
